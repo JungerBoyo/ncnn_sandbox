@@ -1,0 +1,8 @@
+#ifndef NCNNSANDBOX_CONFIG_HPP
+#define NCNNSANDBOX_CONFIG_HPP
+
+namespace cmake {
+  constexpr std::string_view PROJECT_DIR = "@PROJECT_DIR@";
+}
+
+#endif

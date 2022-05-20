@@ -1,0 +1,9 @@
+7767517
+7 7
+Input            in                       0 1 in
+Flatten          Flatten_0                1 1 in onnx::Gemm_7
+InnerProduct     Gemm_1                   1 1 onnx::Gemm_7 input 0=512 1=1 2=401408
+ReLU             Relu_2                   1 1 input onnx::Gemm_9
+InnerProduct     Gemm_3                   1 1 onnx::Gemm_9 input.3 0=512 1=1 2=262144
+ReLU             Relu_4                   1 1 input.3 onnx::Gemm_11
+InnerProduct     Gemm_5                   1 1 onnx::Gemm_11 out 0=10 1=1 2=5120

@@ -1,0 +1,1 @@
+configure_file(config.hpp.in "${CMAKE_BINARY_DIR}/config/include/project_config/config.hpp" ESCAPE_QUOTES)

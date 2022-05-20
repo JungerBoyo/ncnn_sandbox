@@ -1,0 +1,1 @@
+build/res/ncnn/tools/onnx/onnx2ncnn static_res/onnxModels/fashion_MNIST_model.onnx static_res/ncnnModels/fashion_MNIST_model.param static_res/ncnnModels/fashion_MNIST_model.bin

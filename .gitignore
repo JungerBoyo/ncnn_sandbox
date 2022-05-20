@@ -1,0 +1,5 @@
+build/
+.vscode/
+conan.profile
+ncnn_sandbox.code-workspace
+pdb_cheat

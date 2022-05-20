@@ -1,0 +1,2 @@
+for onnx => ncnn 
+  onnx2ncnn _.onnx _.param _.bin
