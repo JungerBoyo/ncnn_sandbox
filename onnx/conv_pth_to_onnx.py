@@ -17,7 +17,8 @@ if __name__=="__main__":
   model.load_state_dict(th.load(path_to_pth_models + arg + "_model.pth"))
 
   model.eval()
-  dummy_in = th.randn(list(get_input_size(path_to_pth_src_model)), requires_grad=True)
+  input_size = list(get_input_size(path_to_pth_src_model))
+  dummy_in = th.randn(input_size)#, requires_grad=True)
 
   th.onnx.export(
     model,
@@ -25,10 +26,10 @@ if __name__=="__main__":
     path_to_onnx_models + arg + "_model.onnx",
     export_params=True,
     opset_version=10, # onnx version
-    do_constant_folding=True, # ???
+    #do_constant_folding=True, # ???
     input_names=["in"],
-    output_names=["out"],
-    dynamic_axes={"in" : {0 : "batch_size"}, "out" : {0 : "batch_size"}}
+    output_names=["out"]
+    #dynamic_axes={"in" : {0 : "batch_size"}, "out" : {0 : "batch_size"}}
   )
 
 

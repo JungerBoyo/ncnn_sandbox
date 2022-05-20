@@ -3,3 +3,5 @@ build/
 conan.profile
 ncnn_sandbox.code-workspace
 pdb_cheat
+pytorch/fashion_MNIST/data
+pytorch/fashion_MNIST/__pycache__

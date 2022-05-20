@@ -9,8 +9,8 @@ if __name__ == "__main__":
   train_data = thv.datasets.FashionMNIST(
     root="data",
     train=True,
-    download=not downloaded,
-    transform=thv.transforms.ToTensor()
+    download=not downloaded#,
+    #transform=thv.transforms.ToTensor()
   )
 
   test_data = thv.datasets.FashionMNIST(
@@ -20,7 +20,12 @@ if __name__ == "__main__":
     transform=thv.transforms.ToTensor()
   )
 
-  ### DEFINE DATALOADERS ###
+  ## DBG ##
+  #img, y = train_data[0]
+  #img.save("../../static_res/imgs/test2.png")
+  #########
+
+  ### DEFINE DATALOADERS (GROUP INTO BATCHES) ###
   batch_size = 64
 
   train_loader = th.utils.data.DataLoader(dataset=train_data, batch_size=batch_size)

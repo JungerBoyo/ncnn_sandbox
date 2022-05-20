@@ -3,6 +3,8 @@ import onnx
 import keras2onnx
 import sys
 
+### doesnt work yet
+
 path_to_tf2_models = "../static_res/tf2Models/"
 path_to_onnx_models = "../static_res/onnxModels/"
 

@@ -5,12 +5,14 @@
 #include <stb_image_write.h>
 #include <spdlog/spdlog.h>
 #include <string_view>
+#include <fstream>
 #include <filesystem>
 #include <project_config/config.hpp>
 
 namespace fs = std::filesystem;
 
 void normalize(ncnn::Mat& img);
+void produceDBGImg(const ncnn::Mat& img);
 
 int main()
 {
@@ -18,7 +20,7 @@ int main()
   int h;
   int chNum;
 
-  constexpr std::string_view ImgPath = "static_res/imgs/test1.png";
+  constexpr std::string_view ImgPath = "static_res/imgs/test2.png";
   constexpr std::string_view NcnnModelsPath = "static_res/ncnnModels/";
   constexpr int reqW{ 28 };
   constexpr int reqH{ 28 };
@@ -26,15 +28,14 @@ int main()
   fs::path projectDirPath(cmake::PROJECT_DIR);
 
   auto imgPath = fs::path(projectDirPath / fs::path(ImgPath));
-  auto* imgPtr = stbi_load(imgPath.c_str(), &w, &h, &chNum, 3);
+  auto* imgPtr = stbi_load(imgPath.c_str(), &w, &h, &chNum, 1);
   if(imgPtr == nullptr)
   {
     spdlog::error("failed to load img from {}", imgPath.c_str());
     return 1;
   }
-  ncnn::DataReader;
   
-  ncnn::Mat in = ncnn::Mat::from_pixels_resize(imgPtr, ncnn::Mat::PIXEL_RGB, w, h, reqW, reqH);
+  ncnn::Mat in = ncnn::Mat::from_pixels_resize(imgPtr, ncnn::Mat::PIXEL_GRAY, w, h, reqW, reqH);
   stbi_image_free(imgPtr);
 
   ///// DEBUG 
@@ -42,13 +43,29 @@ int main()
   //stbi_write_png("static_res/imgs/test0_dbgout.png", reqW, reqH, 3, imgPtr, reqW * 3);
   /////
   
-  normalize(in);
+  //normalize(in);
+  const auto mean { 0.f };
+  const auto norm { 1/255.f };
+  in.substract_mean_normalize(&mean, &norm);
 
   ncnn::Net net;
   net.opt.use_vulkan_compute = true;
-  auto fsPath = fs::path(NcnnModelsPath);
-  net.load_param(fs::path(projectDirPath / fs::path(fsPath / "fashion_MNIST_model.param")).c_str());
-  net.load_model(fs::path(projectDirPath / fs::path(fsPath / "fashion_MNIST_model.bin")).c_str());
+  const auto fsNcnnModelsPath = fs::path(NcnnModelsPath);
+  const auto paramsFilePath = fs::path(projectDirPath / fs::path(fsNcnnModelsPath / "fashion_MNIST_model.param"));
+  const auto binFilePath = fs::path(projectDirPath / fs::path(fsNcnnModelsPath / "fashion_MNIST_model.bin"));
+
+  if(net.load_param(paramsFilePath.c_str()) == -1)
+  {
+    spdlog::error("failed to load ncnn model params at {}", paramsFilePath.c_str());
+    return 1;
+  }
+
+  if(net.load_model(binFilePath.c_str()) == -1)
+  {
+    spdlog::error("failed to load ncnn model bin at {}", paramsFilePath.c_str());
+    return 1;
+  }
+
   
   const auto apiVersion = net.vulkan_device()->info.api_version();
   spdlog::info("using vulkan device :: {}", net.vulkan_device()->info.device_name()); 
@@ -94,4 +111,29 @@ void normalize(ncnn::Mat& img)
   mean /= static_cast<float>(img.total());
 
   img.substract_mean_normalize(&mean, &norm);
+}
+
+void produceDBGImg(const ncnn::Mat& img)
+{
+  std::string strImg = "";
+
+  for(int q=0; q<img.c; ++q)
+  {
+    const float* ptr = img.channel(q); 
+    for (int y=0; y<img.h; y++)
+    {
+      for (int x=0; x<img.w; x++)
+      { 
+        strImg += std::to_string(ptr[x]) + "  ";
+      }
+      strImg += "\n";
+      ptr += img.w;
+    }       
+
+    strImg += "\n\n"; 
+  } 
+
+  std::ofstream ostr(fs::path(cmake::PROJECT_DIR) / fs::path("static_res/imgs/test1_dbg.txt"));
+  ostr << strImg;
+  ostr.close();
 }
