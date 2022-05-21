@@ -20,17 +20,19 @@ if __name__=="__main__":
   input_size = list(get_input_size(path_to_pth_src_model))
   dummy_in = th.randn(input_size)#, requires_grad=True)
 
-  th.onnx.export(
-    model,
-    dummy_in,
-    path_to_onnx_models + arg + "_model.onnx",
-    export_params=True,
-    opset_version=10, # onnx version
-    #do_constant_folding=True, # ???
-    input_names=["in"],
-    output_names=["out"]
-    #dynamic_axes={"in" : {0 : "batch_size"}, "out" : {0 : "batch_size"}}
-  )
+  th.onnx._export(model, dummy_in, path_to_onnx_models + arg + "_model.onnx", export_params=True)
+
+  #th.onnx.export(
+  #  model,
+  #  dummy_in,
+  #  path_to_onnx_models + arg + "_model.onnx",
+  #  export_params=True,
+  #  opset_version=10, # onnx version
+  #  #do_constant_folding=True, # ???
+  #  input_names=["in"],
+  #  output_names=["out"]
+  #  #dynamic_axes={"in" : {0 : "batch_size"}, "out" : {0 : "batch_size"}}
+  #)
 
 
 

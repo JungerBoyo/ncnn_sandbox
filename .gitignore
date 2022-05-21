@@ -1,4 +1,5 @@
 build/
+build_debug/
 .vscode/
 conan.profile
 ncnn_sandbox.code-workspace

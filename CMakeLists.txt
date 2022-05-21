@@ -10,7 +10,6 @@ project(ncnn_sandbox VERSION 0.0.1 LANGUAGES C CXX )
 execute_process(COMMAND conan install ${CMAKE_CURRENT_SOURCE_DIR} 
   --install-folder ${CMAKE_BINARY_DIR}
   -pr=${CMAKE_CURRENT_SOURCE_DIR}/conan.profile
-  -sSTB_IMAGE_IMPLEMENTATION
 )
 
 set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR} ${CMAKE_MODULE_PATH})

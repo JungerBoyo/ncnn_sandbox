@@ -50,10 +50,10 @@ int main()
 
   ncnn::Net net;
   net.opt.use_vulkan_compute = true;
+
   const auto fsNcnnModelsPath = fs::path(NcnnModelsPath);
   const auto paramsFilePath = fs::path(projectDirPath / fs::path(fsNcnnModelsPath / "fashion_MNIST_model.param"));
   const auto binFilePath = fs::path(projectDirPath / fs::path(fsNcnnModelsPath / "fashion_MNIST_model.bin"));
-
   if(net.load_param(paramsFilePath.c_str()) == -1)
   {
     spdlog::error("failed to load ncnn model params at {}", paramsFilePath.c_str());
@@ -66,7 +66,6 @@ int main()
     return 1;
   }
 
-  
   const auto apiVersion = net.vulkan_device()->info.api_version();
   spdlog::info("using vulkan device :: {}", net.vulkan_device()->info.device_name()); 
   spdlog::info("API version :: {}.{}.{}", 
@@ -77,16 +76,16 @@ int main()
 
   ncnn::Extractor ex = net.create_extractor();
   ex.set_light_mode(true);
-  //ex.set_num_threads(4);
+  ex.set_num_threads(4);
 
-  ex.input("in", in);
+  ex.input("onnx::Flatten_0", in);
 
   ncnn::Mat out;
-  ex.extract("out", out);
+  ex.extract("12", out);
 
   for(int i{0}; i<out.total(); ++i)
   {
-    spdlog::info("class_{} :: pred = {}", i, *out.row(i));
+    spdlog::info("class_{} :: pred = {}", i, out[i]);
   }
 }
 
